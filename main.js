@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+const gridsize = 5;
+
 function aziz_light(x,y,z){
     const light = new THREE.PointLight(0xffffff, 1, 100);
     light.position.set(x, y, z);
@@ -29,7 +31,16 @@ function draw_sphere(x,y,z,r){
 }
 
 function draw(){
-    draw_sphere(0,0,0,1);
+    for (let x = 0; x < gridsize; x++) {
+        for (let y = 0; y < gridsize; y++) {
+            for (let z = 0; z < gridsize; z++) {
+
+                draw_sphere(x,y,z,1);
+
+            }
+        }
+    }
+
 }
 
 function animate() {
@@ -60,5 +71,6 @@ ambientLight(0.1);
 aziz_light(10,10,0);
 aziz_light(-10,10,0);
 aziz_light(-10,-10,-10);
-draw();
+//draw();
+draw_sphere(0,0,0,2);
 animate();
