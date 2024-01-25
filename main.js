@@ -1,12 +1,15 @@
 import * as THREE from 'three';
 
 const gridsize = 5;
+const R = 0.5;
+const D = 3;
+
 
 function aziz_light(x,y,z){
     const light = new THREE.PointLight(0xffffff, 1, 100);
     light.position.set(x, y, z);
     light.castShadow = true;
-    light.intensity = 1;
+    light.intensity = 100;
     light.distance = 100;
     scene.add(light);
 }
@@ -30,12 +33,17 @@ function draw_sphere(x,y,z,r){
     scene.add(sphere);
 }
 
+function ofs(x){
+   return x * D - gridsize * D / 2 + D / 2 ;
+}
+
+
 function draw(){
     for (let x = 0; x < gridsize; x++) {
         for (let y = 0; y < gridsize; y++) {
             for (let z = 0; z < gridsize; z++) {
 
-                draw_sphere(x,y,z,1);
+                draw_sphere(ofs(x),ofs(y),ofs(z),R);
 
             }
         }
@@ -71,6 +79,6 @@ ambientLight(0.1);
 aziz_light(10,10,0);
 aziz_light(-10,10,0);
 aziz_light(-10,-10,-10);
-//draw();
-draw_sphere(0,0,0,2);
+draw();
+//draw_sphere(0,0,0,2);
 animate();
