@@ -3,13 +3,28 @@ import * as THREE from 'three';
 const gridsize = 5;
 const R = 0.5;
 const D = 3;
+const fps = 24.0;
+let lastTime = Date.now();
+const sphereGroup = new THREE.Group();
 
 
-function aziz_light(x,y,z){
+function rend(){
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.physicallyCorrectLights = true;
+    renderer.gammaOutput = true;
+    renderer.gammaFactor = 2.2;
+    document.body.appendChild( renderer.domElement );
+    return renderer;
+}
+
+function aziz_light(x,y,z,intensity){
     const light = new THREE.PointLight(0xffffff, 1, 100);
     light.position.set(x, y, z);
     light.castShadow = true;
-    light.intensity = 100;
+    light.intensity = intensity;
     light.distance = 100;
     scene.add(light);
 }
@@ -30,7 +45,7 @@ function draw_sphere(x,y,z,r){
     sphere.position.set(x, y, z);
     sphere.castShadow = true;
     sphere.receiveShadow = true;
-    scene.add(sphere);
+    sphereGroup.add(sphere);
 }
 
 function ofs(x){
@@ -48,37 +63,32 @@ function draw(){
             }
         }
     }
-
+    scene.add(sphereGroup);
 }
 
-function animate() {
+function animate(speed) {
 	requestAnimationFrame( animate );
-	renderer.render( scene, camera );
+    let time = Date.now();
+    let deltaTime = time - lastTime;
+    if(deltaTime>10000.0/fps){
+        lastTime = time;
+        sphereGroup.rotation.y += (speed);
+        renderer.render( scene, camera );
+    }
 }
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-function rend(){
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.physicallyCorrectLights = true;
-    renderer.gammaOutput = true;
-    renderer.gammaFactor = 2.2;
-
-    document.body.appendChild( renderer.domElement );
-    return renderer;
-}
-
 const renderer = rend();
-camera.position.z = 8;
+camera.position.z = 14;
+camera.position.y = 11;
+camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-ambientLight(0.1);
-aziz_light(10,10,0);
-aziz_light(-10,10,0);
-aziz_light(-10,-10,-10);
+ambientLight(0.5);
+aziz_light(10,10,0,300);
+aziz_light(-10,10,0,300);
+aziz_light(-10,-10,-10,300);
 draw();
 //draw_sphere(0,0,0,2);
-animate();
+animate(0.13);
