@@ -3,7 +3,37 @@ import * as THREE from 'three';
 const gridsize = 5;
 const R = 1.0;
 const D = 3.5;
+const maxBalls = 20;
+const randomSpeed = 3;
 const sphereGroup = new THREE.Group();
+
+let rotationAngle = 0;
+
+let filoQueue = [];
+
+function addToQueue(element) {
+    filoQueue.push(element);
+}
+
+function removeFromQueue() {
+    if (filoQueue.length === 0) {
+        console.log("Queue is empty!");
+        return null;
+    }
+    return filoQueue.pop();
+}
+
+function sizeOfQueue() {
+    return filoQueue.length;
+}
+
+function peekQueue() {
+    if (filoQueue.length === 0) {
+        console.log("Queue is empty!");
+        return null;
+    }
+    return filoQueue[filoQueue.length - 1];
+}
 
 
 function rend(){
@@ -78,19 +108,32 @@ function draw(){
 
 function change_random_sphere(how_many, how_often){
     let time = Date.now() % 100;
-    if (time == 0){
-        let sph = sphereGroup.children[Math.round(Math.random()*125)];
+    if (time < randomSpeed){
+        let num = Math.floor(Math.random()*gridsize*gridsize*gridsize)
+        let sph = sphereGroup.children[num];
         sph.material.color.setRGB(Math.random(), Math.random(), Math.random());
+        addToQueue(num);
+        //if(sizeOfQueue()>maxBalls){
+        //    let old = removeFromQueue();
+        //    if (sphereGroup.children[old]){
+        //        sphereGroup.children[old].material.color.setRGB(0.8,0.1,0.1);
+        //    }
+        //}
     }
-    console.log(Math.round(Math.random()*125));
 }
 
 function animate() {
     const speed = 1.0;
     requestAnimationFrame(animate);
     sphereGroup.rotation.y += 0.001; //speed * Math.Pi / 180.0;
+    rotationAngle += 0.001;
     renderer.render(scene, camera);
     change_random_sphere(3,1.0);
+    if(rotationAngle >= 2.0*Math.PI){
+        sphereGroup.rotation.y = 2.0*Math.PI;
+        renderer.render(scene, camera);
+        return ;
+    }
 }
 
 const scene = new THREE.Scene();
@@ -101,6 +144,5 @@ ambientLight(0.5);
 aziz_light(10,10,0,1000);
 aziz_light(-10,10,0,800);
 aziz_light(-10,-10,-10,600);
-
 draw();
 animate();
