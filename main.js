@@ -1,10 +1,8 @@
 import * as THREE from 'three';
 
 const gridsize = 5;
-const R = 0.5;
-const D = 3;
-const fps = 24.0;
-let lastTime = Date.now();
+const R = 1.0;
+const D = 3.5;
 const sphereGroup = new THREE.Group();
 
 
@@ -18,6 +16,17 @@ function rend(){
     renderer.gammaFactor = 2.2;
     document.body.appendChild( renderer.domElement );
     return renderer;
+}
+
+function cam(x,y,z){
+    const camera = new THREE.PerspectiveCamera(
+        75, window.innerWidth / window.innerHeight, 0.1, 1000
+    );
+    camera.position.x = x;
+    camera.position.y = y;
+    camera.position.z = z;
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    return camera;
 }
 
 function aziz_light(x,y,z,intensity){
@@ -37,7 +46,8 @@ function ambientLight(strength){
 function draw_sphere(x,y,z,r){
     const geometry = new THREE.SphereGeometry(r, 32, 32);
     const material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+        //color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+        color: new THREE.Color(0.8,0.1,0.1),
         metalness: 0.9,
         roughness: 0.1
     });
@@ -66,29 +76,31 @@ function draw(){
     scene.add(sphereGroup);
 }
 
-function animate(speed) {
-	requestAnimationFrame( animate );
-    let time = Date.now();
-    let deltaTime = time - lastTime;
-    if(deltaTime>10000.0/fps){
-        lastTime = time;
-        sphereGroup.rotation.y += (speed);
-        renderer.render( scene, camera );
+function change_random_sphere(how_many, how_often){
+    let time = Date.now() % 100;
+    if (time == 0){
+        let sph = sphereGroup.children[Math.round(Math.random()*125)];
+        sph.material.color.setRGB(Math.random(), Math.random(), Math.random());
     }
+    console.log(Math.round(Math.random()*125));
+}
+
+function animate() {
+    const speed = 1.0;
+    requestAnimationFrame(animate);
+    sphereGroup.rotation.y += 0.001; //speed * Math.Pi / 180.0;
+    renderer.render(scene, camera);
+    change_random_sphere(3,1.0);
 }
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
+const camera = cam(0,20,20);
 const renderer = rend();
-camera.position.z = 14;
-camera.position.y = 11;
-camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 ambientLight(0.5);
-aziz_light(10,10,0,300);
-aziz_light(-10,10,0,300);
-aziz_light(-10,-10,-10,300);
+aziz_light(10,10,0,1000);
+aziz_light(-10,10,0,800);
+aziz_light(-10,-10,-10,600);
+
 draw();
-//draw_sphere(0,0,0,2);
-animate(0.13);
+animate();
