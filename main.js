@@ -5,6 +5,7 @@ const R = 1.0;
 const D = 3.5;
 const maxBalls = 40;
 const randomSpeed = 13;
+const rotationSpeed = 0.01;
 const sphereGroup = new THREE.Group();
 
 let rotationAngle = 0;
@@ -126,8 +127,8 @@ function change_random_sphere(how_many, how_often){
 function animate() {
     const speed = 1.0;
     requestAnimationFrame(animate);
-    sphereGroup.rotation.y += 0.001; //speed * Math.Pi / 180.0;
-    rotationAngle += 0.001;
+    sphereGroup.rotation.y += rotationSpeed;
+    rotationAngle += rotationSpeed;
     renderer.render(scene, camera);
     change_random_sphere(3,1.0);
 }
