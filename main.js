@@ -3,8 +3,8 @@ import * as THREE from 'three';
 const gridsize = 5;
 const R = 1.0;
 const D = 3.5;
-const maxBalls = 20;
-const randomSpeed = 3;
+const maxBalls = 40;
+const randomSpeed = 13;
 const sphereGroup = new THREE.Group();
 
 let rotationAngle = 0;
@@ -20,10 +20,11 @@ function removeFromQueue() {
         console.log("Queue is empty!");
         return null;
     }
-    return filoQueue.pop();
+    return filoQueue.shift();
 }
 
 function sizeOfQueue() {
+    console.log(filoQueue);
     return filoQueue.length;
 }
 
@@ -113,12 +114,12 @@ function change_random_sphere(how_many, how_often){
         let sph = sphereGroup.children[num];
         sph.material.color.setRGB(Math.random(), Math.random(), Math.random());
         addToQueue(num);
-        //if(sizeOfQueue()>maxBalls){
-        //    let old = removeFromQueue();
-        //    if (sphereGroup.children[old]){
-        //        sphereGroup.children[old].material.color.setRGB(0.8,0.1,0.1);
-        //    }
-        //}
+        if(sizeOfQueue()>maxBalls){
+            let old = removeFromQueue();
+            if (sphereGroup.children[old]){
+                sphereGroup.children[old].material.color.setRGB(0.8,0.1,0.1);
+            }
+        }
     }
 }
 
@@ -129,11 +130,6 @@ function animate() {
     rotationAngle += 0.001;
     renderer.render(scene, camera);
     change_random_sphere(3,1.0);
-    if(rotationAngle >= 2.0*Math.PI){
-        sphereGroup.rotation.y = 2.0*Math.PI;
-        renderer.render(scene, camera);
-        return ;
-    }
 }
 
 const scene = new THREE.Scene();
